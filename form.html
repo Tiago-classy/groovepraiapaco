@@ -139,7 +139,8 @@
         .form-group input[type="text"],
         .form-group input[type="email"],
         .form-group input[type="tel"],
-        .form-group input[type="date"] {
+        .form-group input[type="date"],
+        .form-group input[type="url"] {
             width: 100%;
             background: rgba(255, 255, 255, 0.06);
             border: 1px solid rgba(255, 255, 255, 0.15);
@@ -163,7 +164,8 @@
         .form-group input[type="text"]:focus,
         .form-group input[type="email"]:focus,
         .form-group input[type="tel"]:focus,
-        .form-group input[type="date"]:focus {
+        .form-group input[type="date"]:focus,
+        .form-group input[type="url"]:focus {
             border-color: rgba(232, 219, 200, 0.5);
             background: rgba(255, 255, 255, 0.09);
         }
@@ -245,54 +247,12 @@
         }
 
         /* ── FILE UPLOAD ── */
-        .file-upload-label {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 0.6rem;
-            padding: 1.6rem 1.2rem;
-            border: 1.5px dashed rgba(232, 219, 200, 0.3);
-            border-radius: 6px;
-            cursor: pointer;
-            text-align: center;
-            transition: border-color 0.2s, background 0.2s;
-        }
-
-        .file-upload-label:hover {
-            border-color: rgba(232, 219, 200, 0.55);
-            background: rgba(255, 255, 255, 0.04);
-        }
-
-        .file-upload-label svg {
-            width: 28px;
-            height: 28px;
-            stroke: rgba(232, 219, 200, 0.55);
-        }
-
-        .file-upload-label span {
-            font-size: 0.8rem;
+        .cv-hint {
+            font-size: 0.75rem;
             font-weight: 300;
-            color: rgba(247, 243, 238, 0.5);
-            letter-spacing: 0.05em;
-        }
-
-        .file-upload-label strong {
-            font-size: 0.82rem;
-            font-weight: 500;
-            color: var(--sand);
-            letter-spacing: 0.06em;
-        }
-
-        #cv-filename {
-            font-size: 0.78rem;
-            color: #a8c9b8;
-            font-weight: 400;
-            display: none;
-        }
-
-        input[type="file"] {
-            display: none;
+            color: rgba(247, 243, 238, 0.4);
+            margin-top: 0.45rem;
+            letter-spacing: 0.03em;
         }
 
         /* ── DIVIDER ── */
@@ -481,24 +441,17 @@
 
                 <!-- CV -->
                 <div class="form-group">
-                    <label>Currículo Vitae <span class="required">*</span></label>
-                    <label class="file-upload-label" for="cv-file" id="cv-upload-label">
-                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                            <polyline points="17 8 12 3 7 8"/>
-                            <line x1="12" y1="3" x2="12" y2="15"/>
-                        </svg>
-                        <strong>Clica para carregar o teu CV</strong>
-                        <span>PDF, DOC ou DOCX · máx. 10 MB</span>
-                        <span id="cv-filename"></span>
-                    </label>
+                    <label for="cv-link">Link do Currículo Vitae <span class="required">*</span></label>
                     <input
-                        type="file"
-                        id="cv-file"
-                        name="Currículo Vitae"
-                        accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        type="url"
+                        id="cv-link"
+                        name="Link do Currículo Vitae"
+                        placeholder="https://drive.google.com/..."
                         required
+                        data-fs-field
                     >
+                    <p class="cv-hint">Carrega o teu CV no Google Drive, Dropbox ou similar e cola aqui o link de partilha.</p>
+                    <span data-fs-error="Link do Currículo Vitae"></span>
                 </div>
 
                 <div class="form-divider"></div>
@@ -530,18 +483,6 @@
                     outraText.value = '';
                 }
             });
-        });
-
-        // Show selected filename
-        document.getElementById('cv-file').addEventListener('change', function() {
-            var filenameEl = document.getElementById('cv-filename');
-            if (this.files && this.files[0]) {
-                filenameEl.textContent = this.files[0].name;
-                filenameEl.style.display = 'block';
-            } else {
-                filenameEl.textContent = '';
-                filenameEl.style.display = 'none';
-            }
         });
 
         // Formspree AJAX – CDN initialisation
