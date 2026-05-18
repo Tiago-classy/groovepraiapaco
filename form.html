@@ -246,13 +246,133 @@
             display: block;
         }
 
-        /* ── FILE UPLOAD ── */
+        /* ── CV TABS ── */
+        .cv-tabs {
+            display: flex;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 1.2rem;
+        }
+
+        .cv-tab-btn {
+            flex: 1;
+            padding: 0.6rem 1rem;
+            background: transparent;
+            border: none;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: rgba(247, 243, 238, 0.4);
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .cv-tab-btn + .cv-tab-btn {
+            border-left: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .cv-tab-btn.active {
+            background: rgba(232, 219, 200, 0.1);
+            color: var(--sand);
+        }
+
+        .cv-panel { display: none; }
+        .cv-panel.active { display: block; }
+
+        /* ── FILE UPLOAD AREA ── */
+        .file-upload-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 1.5rem 1.2rem;
+            border: 1.5px dashed rgba(232, 219, 200, 0.28);
+            border-radius: 6px;
+            text-align: center;
+            transition: border-color 0.2s;
+        }
+
+        .file-upload-area.has-file {
+            border-color: rgba(232, 219, 200, 0.5);
+        }
+
+        .file-upload-area input[type="file"] {
+            display: none;
+        }
+
+        .file-pick-btn {
+            display: inline-block;
+            padding: 0.5rem 1.2rem;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 4px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--sand);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .file-pick-btn:hover { background: rgba(255,255,255,0.1); }
+
+        .file-selected-name {
+            font-size: 0.8rem;
+            font-weight: 300;
+            color: rgba(247, 243, 238, 0.45);
+            word-break: break-all;
+        }
+
+        .btn-upload-cv {
+            padding: 0.55rem 1.5rem;
+            background: var(--sand);
+            color: var(--green-dark);
+            border: none;
+            border-radius: 4px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: none;
+        }
+
+        .btn-upload-cv:hover { background: #f0e4cf; }
+        .btn-upload-cv.visible { display: inline-block; }
+        .btn-upload-cv:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .cv-upload-status {
+            font-size: 0.78rem;
+            font-weight: 300;
+            letter-spacing: 0.03em;
+            min-height: 1.1em;
+        }
+
+        .cv-upload-status.uploading { color: rgba(247, 243, 238, 0.45); }
+        .cv-upload-status.ok  { color: #a8d9bb; }
+        .cv-upload-status.fail { color: #e0a0a0; }
+
         .cv-hint {
             font-size: 0.75rem;
             font-weight: 300;
             color: rgba(247, 243, 238, 0.4);
             margin-top: 0.45rem;
             letter-spacing: 0.03em;
+        }
+
+        .cv-error {
+            display: block;
+            font-size: 0.78rem;
+            color: #e0a0a0;
+            margin-top: 0.4rem;
+            min-height: 1.1em;
         }
 
         /* ── DIVIDER ── */
@@ -441,17 +561,42 @@
 
                 <!-- CV -->
                 <div class="form-group">
-                    <label for="cv-link">Link do Currículo Vitae <span class="required">*</span></label>
-                    <input
-                        type="url"
-                        id="cv-link"
-                        name="Link do Currículo Vitae"
-                        placeholder="https://drive.google.com/..."
-                        required
-                        data-fs-field
-                    >
-                    <p class="cv-hint">Carrega o teu CV no Google Drive, Dropbox ou similar e cola aqui o link de partilha.</p>
-                    <span data-fs-error="Link do Currículo Vitae"></span>
+                    <label>Currículo Vitae <span class="required">*</span></label>
+
+                    <!-- Tab toggle -->
+                    <div class="cv-tabs" role="tablist">
+                        <button type="button" class="cv-tab-btn active" data-tab="upload"
+                                role="tab" aria-selected="true">Carregar ficheiro</button>
+                        <button type="button" class="cv-tab-btn" data-tab="link"
+                                role="tab" aria-selected="false">Partilhar link</button>
+                    </div>
+
+                    <!-- Panel: file upload via Google Drive -->
+                    <div class="cv-panel active" id="cv-panel-upload">
+                        <div class="file-upload-area" id="cv-upload-area">
+                            <input type="file" id="cv-file-input" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                            <label class="file-pick-btn" for="cv-file-input">Escolher ficheiro</label>
+                            <span class="file-selected-name" id="cv-selected-name">Nenhum ficheiro selecionado</span>
+                            <button type="button" class="btn-upload-cv" id="cv-upload-btn">Carregar para Drive</button>
+                            <span class="cv-upload-status" id="cv-upload-status"></span>
+                        </div>
+                        <p class="cv-hint">PDF, DOC ou DOCX · máx. 10 MB. O ficheiro será guardado no Google Drive.</p>
+                    </div>
+
+                    <!-- Panel: paste link -->
+                    <div class="cv-panel" id="cv-panel-link">
+                        <input
+                            type="url"
+                            id="cv-link-visible"
+                            placeholder="https://drive.google.com/..."
+                            autocomplete="off"
+                        >
+                        <p class="cv-hint">Carrega o teu CV no Google Drive, Dropbox ou similar e cola aqui o link de partilha.</p>
+                    </div>
+
+                    <!-- Hidden field submitted to Formspree -->
+                    <input type="hidden" id="cv-link" name="Link do Currículo Vitae">
+                    <span class="cv-error" id="cv-error"></span>
                 </div>
 
                 <div class="form-divider"></div>
@@ -484,6 +629,112 @@
                 }
             });
         });
+
+        // ── CV Upload to Google Drive ──
+        // TODO: replace with your deployed Google Apps Script Web App URL
+        var GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwe93lr4e4on766_IoakB8vpxluf-HaM67QEjLGDRlEC6gueyNuhl5kGphWOW4ODBiF/exec';
+
+        var cvMode = 'upload';
+        var cvTabBtns    = document.querySelectorAll('.cv-tab-btn');
+        var cvPanelUpload = document.getElementById('cv-panel-upload');
+        var cvPanelLink  = document.getElementById('cv-panel-link');
+        var cvFileInput  = document.getElementById('cv-file-input');
+        var cvSelectedName = document.getElementById('cv-selected-name');
+        var cvUploadArea = document.getElementById('cv-upload-area');
+        var cvUploadBtn  = document.getElementById('cv-upload-btn');
+        var cvUploadStatus = document.getElementById('cv-upload-status');
+        var cvLinkVisible = document.getElementById('cv-link-visible');
+        var cvLinkHidden = document.getElementById('cv-link');
+        var cvError      = document.getElementById('cv-error');
+
+        // Tab switching
+        cvTabBtns.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                cvMode = btn.dataset.tab;
+                cvTabBtns.forEach(function(b) {
+                    b.classList.toggle('active', b === btn);
+                    b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
+                });
+                cvPanelUpload.classList.toggle('active', cvMode === 'upload');
+                cvPanelLink.classList.toggle('active', cvMode === 'link');
+                // Sync hidden field to current tab's value
+                cvLinkHidden.value = cvMode === 'link'
+                    ? cvLinkVisible.value.trim()
+                    : (cvUploadArea.dataset.uploadedUrl || '');
+                cvError.textContent = '';
+            });
+        });
+
+        // Sync visible link input → hidden field
+        cvLinkVisible.addEventListener('input', function() {
+            cvLinkHidden.value = this.value.trim();
+        });
+
+        // File selected
+        cvFileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                cvSelectedName.textContent = this.files[0].name;
+                cvUploadBtn.classList.add('visible');
+                cvUploadArea.classList.add('has-file');
+                cvUploadStatus.textContent = '';
+                cvUploadStatus.className = 'cv-upload-status';
+                cvLinkHidden.value = '';
+                delete cvUploadArea.dataset.uploadedUrl;
+            } else {
+                cvSelectedName.textContent = 'Nenhum ficheiro selecionado';
+                cvUploadBtn.classList.remove('visible');
+                cvUploadArea.classList.remove('has-file');
+            }
+        });
+
+        // Upload to Google Drive via Apps Script
+        cvUploadBtn.addEventListener('click', function() {
+            var file = cvFileInput.files[0];
+            if (!file) return;
+            cvUploadBtn.disabled = true;
+            cvUploadStatus.textContent = 'A carregar…';
+            cvUploadStatus.className = 'cv-upload-status uploading';
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var base64 = e.target.result.split(',')[1];
+                fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ base64: base64, mimeType: file.type, filename: file.name })
+                })
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    if (data.status === 'success') {
+                        cvLinkHidden.value = data.url;
+                        cvUploadArea.dataset.uploadedUrl = data.url;
+                        cvUploadStatus.textContent = '\u2713 Ficheiro carregado com sucesso.';
+                        cvUploadStatus.className = 'cv-upload-status ok';
+                        cvError.textContent = '';
+                    } else {
+                        cvUploadStatus.textContent = '\u2717 Erro: ' + (data.message || 'tenta novamente.');
+                        cvUploadStatus.className = 'cv-upload-status fail';
+                    }
+                })
+                .catch(function() {
+                    cvUploadStatus.textContent = '\u2717 N\u00e3o foi poss\u00edvel ligar ao servidor.';
+                    cvUploadStatus.className = 'cv-upload-status fail';
+                })
+                .finally(function() { cvUploadBtn.disabled = false; });
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Validate cv-link before Formspree processes the submit
+        document.getElementById('candidatura-form').addEventListener('submit', function(e) {
+            if (!cvLinkHidden.value.trim()) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                cvError.textContent = cvMode === 'upload'
+                    ? 'Por favor carrega o teu CV antes de enviar.'
+                    : 'Por favor insere o link do teu CV.';
+            } else {
+                cvError.textContent = '';
+            }
+        }, true); // capture phase – runs before Formspree
 
         // Formspree AJAX – CDN initialisation
         window.formspree = window.formspree || function () { (formspree.q = formspree.q || []).push(arguments); };
