@@ -79,8 +79,7 @@
 
         .hero__logo {
             width: min(260px, 55vw);
-            filter: brightness(0) invert(1);
-            drop-shadow: 0 4px 24px rgba(0,0,0,0.4);
+            filter: brightness(0) invert(1) drop-shadow(0 4px 24px rgba(0,0,0,0.4));
         }
 
         .hero__tagline {
@@ -98,6 +97,30 @@
             height: 1px;
             background: var(--sand);
             opacity: 0.6;
+        }
+
+        .hero__menu-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 46px;
+            padding: 0.75rem 1.4rem;
+            border-radius: 999px;
+            border: 1px solid rgba(232, 219, 200, 0.7);
+            background: rgba(42, 63, 53, 0.45);
+            color: var(--white);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            font-size: 0.74rem;
+            font-weight: 500;
+            transition: background 0.25s ease, transform 0.2s ease, border-color 0.25s ease;
+        }
+
+        .hero__menu-btn:hover {
+            background: rgba(61, 107, 86, 0.7);
+            border-color: rgba(232, 219, 200, 0.95);
+            transform: translateY(-1px);
         }
 
         /* ── SECTION – ABOUT ── */
@@ -378,7 +401,8 @@
             <img class="hero__logo" src="images/logo.png" alt="Groove Praia do Paçô">
             <div class="hero__divider"></div>
             <p class="hero__tagline">Praia do Paçô &nbsp;·&nbsp; Portugal</p>
-        </div>g
+            <a class="hero__menu-btn" href="menu.html">Ver Menu</a>
+        </div>
     </section>
 
     <!-- ABOUT -->

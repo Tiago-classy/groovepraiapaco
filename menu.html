@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu - Groove Praia do Paco</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green-dark: #1f332b;
+            --green-mid: #2f4d3f;
+            --sand: #e5d8c6;
+            --mist: #f4efe8;
+            --ink: #142019;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            width: 100%;
+            min-height: 100%;
+            font-family: 'Montserrat', sans-serif;
+            background:
+                linear-gradient(rgba(20, 32, 25, 0.68), rgba(20, 32, 25, 0.78)),
+                url('images/beach2.jpeg') center / cover no-repeat fixed;
+            color: var(--mist);
+        }
+
+        .page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            gap: 1.5rem;
+        }
+
+        .title {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+        }
+
+        .title h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            color: var(--sand);
+        }
+
+        .title p {
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            font-size: 0.72rem;
+            opacity: 0.75;
+        }
+
+        .menu-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(160px, 240px));
+            gap: 1rem;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .menu-btn {
+            border: 1px solid rgba(229, 216, 198, 0.35);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--mist);
+            border-radius: 999px;
+            padding: 0.95rem 1.2rem;
+            font-size: 0.92rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+            min-height: 48px;
+        }
+
+        .menu-btn:hover {
+            transform: translateY(-2px);
+            background: rgba(229, 216, 198, 0.12);
+            border-color: rgba(229, 216, 198, 0.7);
+        }
+
+        .viewer {
+            width: 100%;
+            max-width: 1100px;
+            height: calc(100vh - 3rem);
+            display: none;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .viewer__top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .back-btn {
+            border: 1px solid rgba(229, 216, 198, 0.6);
+            background: rgba(229, 216, 198, 0.12);
+            color: var(--mist);
+            border-radius: 999px;
+            padding: 0.65rem 1rem;
+            font-size: 0.82rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            cursor: pointer;
+            min-height: 44px;
+        }
+
+        .viewer__label {
+            font-size: 0.82rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--sand);
+            opacity: 0.9;
+        }
+
+        iframe {
+            flex: 1;
+            width: 100%;
+            border: 1px solid rgba(229, 216, 198, 0.25);
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        .is-viewing .menu-screen {
+            display: none;
+        }
+
+        .is-viewing .viewer {
+            display: flex;
+        }
+
+        @media (max-width: 720px) {
+            .menu-buttons {
+                grid-template-columns: 1fr;
+                max-width: 320px;
+            }
+
+            .viewer {
+                height: calc(100vh - 1.8rem);
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page" id="pageRoot">
+        <section class="menu-screen">
+            <header class="title">
+                <h1>Menu</h1>
+            </header>
+            <div class="menu-buttons">
+                <button class="menu-btn" id="foodBtn" type="button">Food / Comida</button>
+                <button class="menu-btn" id="drinksBtn" type="button">Drinks / Bebidas</button>
+            </div>
+        </section>
+
+        <section class="viewer" id="viewer">
+            <div class="viewer__top">
+                <button class="back-btn" id="backBtn" type="button">Back / Voltar</button>
+                <p class="viewer__label" id="viewerLabel">Menu</p>
+            </div>
+            <iframe id="pdfFrame" title="PDF Menu"></iframe>
+        </section>
+    </main>
+
+    <script>
+        (function () {
+            var pageRoot = document.getElementById('pageRoot');
+            var frame = document.getElementById('pdfFrame');
+            var label = document.getElementById('viewerLabel');
+
+            var PDF_PATHS = {
+                food: 'pdfs/comida.pdf',
+                drinks: 'pdfs/bebida.pdf'
+            };
+
+            function openPdf(type) {
+                var path = PDF_PATHS[type];
+                if (!path) {
+                    return;
+                }
+
+                label.textContent = type === 'food' ? 'Food / Comida' : 'Drinks / Bebidas';
+                frame.src = path;
+                pageRoot.classList.add('is-viewing');
+            }
+
+            function closePdf() {
+                pageRoot.classList.remove('is-viewing');
+                frame.src = '';
+                label.textContent = 'Menu';
+            }
+
+            document.getElementById('foodBtn').addEventListener('click', function () {
+                openPdf('food');
+            });
+
+            document.getElementById('drinksBtn').addEventListener('click', function () {
+                openPdf('drinks');
+            });
+
+            document.getElementById('backBtn').addEventListener('click', closePdf);
+        })();
+    </script>
+</body>
+</html>
