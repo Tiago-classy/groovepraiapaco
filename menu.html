@@ -153,12 +153,24 @@
             opacity: 0.9;
         }
 
-        iframe {
+        iframe, .pdf-embed {
             flex: 1;
             width: 100%;
             border: 1px solid rgba(229, 216, 198, 0.25);
             border-radius: 10px;
             background: #fff;
+        }
+
+        .pdf-fallback {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border: 1px solid rgba(229, 216, 198, 0.25);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
         }
 
         .is-viewing .menu-screen {
@@ -197,54 +209,61 @@
             <div class="viewer__top">
                 <div class="viewer__actions">
                     <button class="back-btn" id="backBtn" type="button">Back / Voltar</button>
-                    <a class="open-direct-btn" id="openDirectBtn" href="#" target="_blank" rel="noopener noreferrer">Abrir PDF</a>
+                    <a class="open-direct-btn" id="downloadBtn" href="#" download>Download PDF</a>
                 </div>
                 <p class="viewer__label" id="viewerLabel">Menu</p>
             </div>
-            <iframe id="pdfFrame" title="PDF Menu"></iframe>
+            <img id="menuImage" class="pdf-embed" alt="Menu" style="object-fit: contain;" />
         </section>
     </main>
 
     <script>
         (function () {
             var pageRoot = document.getElementById('pageRoot');
-            var frame = document.getElementById('pdfFrame');
+            var menuImage = document.getElementById('menuImage');
             var label = document.getElementById('viewerLabel');
-            var openDirectBtn = document.getElementById('openDirectBtn');
+            var downloadBtn = document.getElementById('downloadBtn');
 
-            var PDF_PATHS = {
-                food: 'pdfs/comida.pdf',
-                drinks: 'pdfs/bebida.pdf'
+            var MENU_DATA = {
+                food: {
+                    image: 'images/comida.jpeg',
+                    pdf: 'pdfs/comida.pdf'
+                },
+                drinks: {
+                    image: 'images/bebida.jpeg',
+                    pdf: 'pdfs/bebida.pdf'
+                }
             };
 
-            function openPdf(type) {
-                var path = PDF_PATHS[type];
-                if (!path) {
+            function openMenu(type) {
+                var data = MENU_DATA[type];
+                if (!data) {
                     return;
                 }
 
-                openDirectBtn.href = path;
+                downloadBtn.href = data.pdf;
+                downloadBtn.download = type + '-menu.pdf';
                 label.textContent = type === 'food' ? 'Food / Comida' : 'Drinks / Bebidas';
-                frame.src = path;
+                menuImage.src = data.image;
                 pageRoot.classList.add('is-viewing');
             }
 
-            function closePdf() {
+            function closeMenu() {
                 pageRoot.classList.remove('is-viewing');
-                frame.src = '';
-                openDirectBtn.href = '#';
+                menuImage.src = '';
+                downloadBtn.href = '#';
                 label.textContent = 'Menu';
             }
 
             document.getElementById('foodBtn').addEventListener('click', function () {
-                openPdf('food');
+                openMenu('food');
             });
 
             document.getElementById('drinksBtn').addEventListener('click', function () {
-                openPdf('drinks');
+                openMenu('drinks');
             });
 
-            document.getElementById('backBtn').addEventListener('click', closePdf);
+            document.getElementById('backBtn').addEventListener('click', closeMenu);
         })();
     </script>
 </body>
