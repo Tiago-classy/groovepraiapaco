@@ -208,6 +208,7 @@
             <div class="viewer__top">
                 <div class="viewer__actions">
                     <button class="back-btn" id="backBtn" type="button">Back / Voltar</button>
+                    <a class="open-direct-btn" id="downloadBtn" href="#" download>Download PDF</a>
                 </div>
                 <p class="viewer__label" id="viewerLabel">Menu</p>
             </div>
@@ -220,6 +221,7 @@
             var pageRoot = document.getElementById('pageRoot');
             var menuImage = document.getElementById('menuImage');
             var label = document.getElementById('viewerLabel');
+            var downloadBtn = document.getElementById('downloadBtn');
 
             var MENU_DATA = {
                 food: {
